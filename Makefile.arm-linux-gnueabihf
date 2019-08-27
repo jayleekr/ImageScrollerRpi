@@ -1,0 +1,81 @@
+OBJ_DIR = $(PROJECT_ROOT)/ImageScroller/obj/arm-linux-gnueabihf
+BIN_DIR = $(PROJECT_ROOT)/ImageScroller/bin/arm-linux-gnueabihf
+SHADER_DIR  = $(PROJECT_ROOT)/ImageScroller/shaders
+
+CXX = arm-linux-gnueabihf-g++
+
+
+FLAGS = \
+	-Wall \
+	-fPIC \
+	-I$(ROOTFS)/usr/include \
+	-I$(ROOTFS)/usr/include/arm-linux-gnueabihf \
+	-I$(ROOTFS)/opt/vc/include \
+	-I.
+
+CXXFLAGS = -c -O2 -std=c++11 -DNDEBUG $(FLAGS)
+
+
+OBJS = \
+	$(OBJ_DIR)/ImageScroller.o  \
+	$(OBJ_DIR)/Screen_setup.o  \
+	$(OBJ_DIR)/LoadShaders.o
+
+
+STRIP = arm-linux-gnueabihf-strip
+
+LIBS = -Wl,--start-group  -lbcm_host -lvcos  -lbrcmGLESv2 -lbrcmEGL -lfreeimage -lpthread -Wl,--end-group
+
+
+
+AR = arm-linux-gnueabihf-ar
+ARFLAGS = -ras elf32
+
+BIN_OUTPUT = $(BIN_DIR)/ImageScroller
+
+SHADERS = $(SHADER_DIR)/fragshader.glsl $(SHADER_DIR)/vertshader.glsl
+
+
+
+LDFLAGS = \
+	-L$(ROOTFS)/lib/arm-linux-gnueabihf \
+	-L$(ROOTFS)/usr/lib \
+	-L$(ROOTFS)/usr/lib/arm-linux-gnueabihf/ \
+	-L$(ROOTFS)/opt/vc/lib \
+	-L$(ROOTFS)/usr/local/lib \
+	-Wl,-rpath-link,$(ROOTFS)/lib/arm-linux-gnueabihf/ \
+	-Wl,-rpath-link,$(ROOTFS)/usr/lib \
+	-Wl,-rpath-link,$(ROOTFS)/usr/lib/arm-linux-gnueabihf \
+	-Wl,-rpath-link,$(ROOTFS)/opt/vc/lib \
+    -Wl,-rpath-link,-L$(ROOTFS)/usr/local/lib
+
+
+
+all: prepare  $(BIN_OUTPUT)
+
+prepare:
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(BIN_DIR)
+	@cp -f $(SHADERS) $(BIN_DIR)
+
+$(OBJ_DIR)/%.o: %.cpp
+	@echo Compiling: $<
+	@$(CXX) $(CXXFLAGS) -o $@ $<
+	@echo Success
+
+$(BIN_OUTPUT): $(OBJS)
+	@echo Linking: $@
+	@$(CXX) $(LDFLAGS) -o $@  $(OBJS) $(LIBS)
+	@$(STRIP) $(BIN_OUTPUT)
+	@echo
+
+clean:
+	@rm -rf $(OBJ_DIR)  $(BIN_DIR)
+
+install:
+	@cp -f $(BIN_OUTPUT) $(ROOTFS)/usr/local/bin/
+	@cp -f $(SHADERS) $(ROOTFS)/usr/local/bin/
+
+uninstall:
+	@rm -f $(ROOTFS)/usr/local/bin/ImageScroller
+	@rm -f $(ROOTFS)/usr/local/bin/*.glsl
