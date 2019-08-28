@@ -1,6 +1,8 @@
-OBJ_DIR = $(PROJECT_ROOT)/ImageScroller/obj/arm-linux-gnueabihf
-BIN_DIR = $(PROJECT_ROOT)/ImageScroller/bin/arm-linux-gnueabihf
-SHADER_DIR  = $(PROJECT_ROOT)/ImageScroller/shaders
+OBJ_DIR = ./obj/arm-linux-gnueabihf
+BIN_DIR = ./bin/arm-linux-gnueabihf
+SHADER_DIR  = ./shaders
+
+LIBS_DIR = ./libs
 
 CXX = arm-linux-gnueabihf-g++
 
@@ -8,9 +10,9 @@ CXX = arm-linux-gnueabihf-g++
 FLAGS = \
 	-Wall \
 	-fPIC \
-	-I$(ROOTFS)/usr/include \
-	-I$(ROOTFS)/usr/include/arm-linux-gnueabihf \
-	-I$(ROOTFS)/opt/vc/include \
+	-I$(LIBS_DIR)/usr/include \
+	-I$(LIBS_DIR)/usr/include/arm-linux-gnueabihf \
+	-I$(LIBS_DIR)/opt/vc/include \
 	-I.
 
 CXXFLAGS = -c -O2 -std=c++11 -DNDEBUG $(FLAGS)
@@ -38,16 +40,16 @@ SHADERS = $(SHADER_DIR)/fragshader.glsl $(SHADER_DIR)/vertshader.glsl
 
 
 LDFLAGS = \
-	-L$(ROOTFS)/lib/arm-linux-gnueabihf \
-	-L$(ROOTFS)/usr/lib \
-	-L$(ROOTFS)/usr/lib/arm-linux-gnueabihf/ \
-	-L$(ROOTFS)/opt/vc/lib \
-	-L$(ROOTFS)/usr/local/lib \
-	-Wl,-rpath-link,$(ROOTFS)/lib/arm-linux-gnueabihf/ \
-	-Wl,-rpath-link,$(ROOTFS)/usr/lib \
-	-Wl,-rpath-link,$(ROOTFS)/usr/lib/arm-linux-gnueabihf \
-	-Wl,-rpath-link,$(ROOTFS)/opt/vc/lib \
-    -Wl,-rpath-link,-L$(ROOTFS)/usr/local/lib
+	-L$(LIBS_DIR)/lib/arm-linux-gnueabihf \
+	-L$(LIBS_DIR)/usr/lib \
+	-L$(LIBS_DIR)/usr/lib/arm-linux-gnueabihf/ \
+	-L$(LIBS_DIR)/opt/vc/lib \
+	-L$(LIBS_DIR)/usr/local/lib \
+	-Wl,-rpath-link,$(LIBS_DIR)/lib/arm-linux-gnueabihf/ \
+	-Wl,-rpath-link,$(LIBS_DIR)/usr/lib \
+	-Wl,-rpath-link,$(LIBS_DIR)/usr/lib/arm-linux-gnueabihf \
+	-Wl,-rpath-link,$(LIBS_DIR)/opt/vc/lib \
+    -Wl,-rpath-link,-L$(LIBS_DIR)/usr/local/lib
 
 
 
@@ -73,9 +75,9 @@ clean:
 	@rm -rf $(OBJ_DIR)  $(BIN_DIR)
 
 install:
-	@cp -f $(BIN_OUTPUT) $(ROOTFS)/usr/local/bin/
-	@cp -f $(SHADERS) $(ROOTFS)/usr/local/bin/
+	@cp -f $(BIN_OUTPUT) $(LIBS_DIR)/usr/local/bin/
+	@cp -f $(SHADERS) $(LIBS_DIR)/usr/local/bin/
 
 uninstall:
-	@rm -f $(ROOTFS)/usr/local/bin/ImageScroller
-	@rm -f $(ROOTFS)/usr/local/bin/*.glsl
+	@rm -f $(LIBS_DIR)/usr/local/bin/ImageScroller
+	@rm -f $(LIBS_DIR)/usr/local/bin/*.glsl
