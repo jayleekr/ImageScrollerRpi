@@ -4,7 +4,7 @@ SHADER_DIR  = ./shaders
 
 LIBS_DIR = ./libs
 
-CXX = arm-linux-gnueabihf-g++
+CXX = arm-linux-gnueabihf-g++-4.8
 
 
 FLAGS = \
