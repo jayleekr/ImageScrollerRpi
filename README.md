@@ -9,7 +9,7 @@ Simple Image Scroller for Raspberry pi
 >apt-get install g++-4.8-arm-linux-gnueabihf
 
 ## How to build?
->make
+>make<br/>
 >Compiled binary will be located in ./bin/arm-linux-gnueabihf
 
 
