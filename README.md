@@ -15,3 +15,4 @@ Simple Image Scroller for Raspberry pi
 
 ## How to use?
 >ImageScroller -h or --help  for help
+#
